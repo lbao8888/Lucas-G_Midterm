@@ -578,7 +578,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &364329451
 Transform:
   m_ObjectHideFlags: 0
@@ -1934,7 +1934,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1372200245}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b7d9b8302a9fbc949b64872ba0469ae2, type: 3}
   m_Name: 
@@ -2120,6 +2120,10 @@ MonoBehaviour:
   loadPos: {x: 0, y: 0, z: 0}
   loadRot: {x: 0, y: 0, z: 0, w: 0}
   coinsCollected: []
+  ratQuestConfig: {fileID: 0}
+  ratQuestState: 0
+  ratsCaught: []
+  ratRewardClaimed: 0
 --- !u!4 &1661916342
 Transform:
   m_ObjectHideFlags: 0
@@ -2579,7 +2583,7 @@ Light:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2066751140}
   m_Enabled: 1
-  serializedVersion: 13
+  serializedVersion: 12
   m_Type: 1
   m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
   m_Intensity: 1
@@ -2631,7 +2635,7 @@ Light:
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
   m_ForceVisible: 0
-  m_ShapeRadius: 0
+  m_ShadowRadius: 0
   m_ShadowAngle: 0
   m_LightUnit: 1
   m_LuxAtDistance: 1

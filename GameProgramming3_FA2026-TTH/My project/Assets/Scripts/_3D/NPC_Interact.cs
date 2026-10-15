@@ -22,6 +22,32 @@ public class NPC_Interact : MonoBehaviour
         //BUT we can practice a bit of deliberate design because we know we're creating
         //a systematized NPC rig & interaction for multiple instances
         npc_cam_rig = transform.GetComponentInChildren<NPC_Cam_Rig>();
+        if (npcDialogue != null)
+        {
+            npcDialogue.onDialogueStart.AddListener(HandleDialogueStarted);
+            npcDialogue.onDialogueComplete.AddListener(HandleDialogueCompleted);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (npcDialogue != null)
+        {
+            npcDialogue.onDialogueStart.RemoveListener(HandleDialogueStarted);
+            npcDialogue.onDialogueComplete.RemoveListener(HandleDialogueCompleted);
+        }
+
+        HandleDialogueCompleted();
+    }
+
+    private void HandleDialogueStarted()
+    {
+        _GameController.instance?.setPlayerMovement(true);
+    }
+
+    private void HandleDialogueCompleted()
+    {
+        _GameController.instance?.setPlayerMovement(false);
     }
 
     public void OnTriggerEnter(Collider other)
@@ -44,19 +70,25 @@ public class NPC_Interact : MonoBehaviour
 
     public void setText(string txt)
     {
-        promtText.text = txt;
+        if (promtText != null)
+        {
+            promtText.text = txt;
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (canInteract)
+        if (canInteract && npcDialogue != null && !npcDialogue.IsDialogueRunning)
         {
-            if (Keyboard.current.eKey.wasPressedThisFrame)
+            if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
             {
                 Debug.Log("Start NPC Dialogue");
                 setText("");
-                npc_cam_rig.movePlayer();
+                if (npc_cam_rig != null)
+                {
+                    npc_cam_rig.movePlayer();
+                }
                 npcDialogue.StartDialogue(storyData.startingNode);
                 canInteract = false;
             }
@@ -94,5 +126,47 @@ public class NPC_Interact : MonoBehaviour
     public void OnApplicationQuit()
     {
         storyData.dataReset();
+    }
+
+    [YarnCommand("acceptRatQuest")]
+    public void AcceptRatQuest()
+    {
+        _GameController.instance?.AcceptRatQuest();
+    }
+
+    [YarnCommand("rewardRatQuest")]
+    public void RewardRatQuest()
+    {
+        _GameController.instance?.TryRewardRatQuest();
+    }
+
+    [YarnFunction("ratQuestIsActive")]
+    public static bool RatQuestIsActive()
+    {
+        return _GameController.instance != null && _GameController.instance.ratQuestState == RatQuestState.Active;
+    }
+
+    [YarnFunction("ratQuestCanTurnIn")]
+    public static bool RatQuestCanTurnIn()
+    {
+        return _GameController.instance != null && _GameController.instance.CanTurnInRatQuest();
+    }
+
+    [YarnFunction("ratQuestIsComplete")]
+    public static bool RatQuestIsComplete()
+    {
+        return _GameController.instance != null && _GameController.instance.ratQuestState == RatQuestState.Complete;
+    }
+
+    [YarnFunction("ratsCaught")]
+    public static int RatsCaught()
+    {
+        return _GameController.instance == null ? 0 : _GameController.instance.RatsCaughtCount;
+    }
+
+    [YarnFunction("ratTarget")]
+    public static int RatTarget()
+    {
+        return _GameController.instance == null ? 12 : _GameController.instance.RatTargetCount;
     }
 }

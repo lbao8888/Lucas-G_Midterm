@@ -1,59 +1,91 @@
-﻿title: NPC_Dialogue
+title: loadPhase
 ---
-This is an example of a Yarn Spinner script. Write your dialogue here!
-===
-title:loadPhase
----
-<<declare $dialogPhase = "">>
-<<declare $hasVisited = false>>
-<<setPhase NPC>>
-//the NPC gameObject name called in the <<setPhase>> command should map to the SPECIFIC NPC you want to reference
-//FOR INSTANCE: if you have a particular gameObject NPC that you want this to call from, make sure you're using that gameObject name
-<<if $dialogPhase == "begin">>
-<<jump Start>>
-<<elseif $dialogPhase == "comeback">>
-<<jump comeback>>
-<<elseif $dialogPhase == "quest_completed">>
-<<jump doneWithQuest>>
+<<if ratQuestIsComplete()>>
+    <<jump AfterReward>>
+<<elseif ratQuestCanTurnIn()>>
+    <<jump TurnIn>>
+<<elseif ratQuestIsActive()>>
+    <<jump ActiveQuest>>
 <<else>>
-Nicholas: I'm not sure *what's* going on, but you dun' fucked up.
+    <<jump Start>>
 <<endif>>
 ===
 title: Start
 ---
 <<cam_move NPC_Cam_Rig "npc">>
-<<set $hasVisited to true>>
-Nicholas: Hello there, stranger!
-Nicholas: Nice to see you.
-Nicholas: I have a lil' pickle that I need you to solve.
-Nicholas: Can you help me?
-    <<cam_move NPC_Cam_Rig "pc">>
-    ->Yes I can.
-        <<cam_move NPC_Cam_Rig "npc">>
-        Nicholas: Great news! Thanks a bunch!
-        <<cam_move NPC_Cam_Rig "return">>
-    ->Not right now, old man.
-        <<getPhase NPC "comeback">>
-        <<cam_move NPC_Cam_Rig "npc">>
-        Nicholas: Well... that hurts my feelings.
-        <<cam_move NPC_Cam_Rig "return">>
+Homeowner: You! Pest-control person! Thank goodness. Something screamed in my house.
+Homeowner: It may have been me. It was probably me. The rats are judging me.
+-> When did you first see them?
+    <<jump AskedWhen>>
+-> How many rats are there?
+    <<jump AskedHowMany>>
+-> Why were you screaming?
+    <<jump AskedWhy>>
+-> Tell me what you need.
+    <<jump OfferQuest>>
 ===
-title:comeback
+title: AskedWhen
 ---
-Nichoals: Hey you're back! Did you change your mind?
-Nicholas: Please, help me....!
-    ->OK fine....
+Homeowner: Three nights ago. Or three weeks. Time bends when twelve tiny eyes become twenty-four.
+Homeowner: They came from the backyard and started scratching under the walls.
+<<jump Questions>>
 ===
-title:doneWithQuest
+title: AskedHowMany
 ---
-<<if $hasVisited == true>>
-Nicholas: Did you finish the task I asked you to do?
-    ->Sure did, hoss!
-        Nicholas: That's great. I love you.
-<<else>>
-Nicholas: Heya! I see that you've got an item I've been looking for.
-Nicholas: Can I take that off of your hands?
-    ->Yeah, go for it pops!
-        Nicholas: Gosh, you're the best. I love you.
-<<endif>>
+Homeowner: Twelve. Exactly twelve. I counted them twice, then counted myself by mistake.
+Homeowner: Catch all 12. Not eleven. Eleven is how they trick you.
+<<jump Questions>>
+===
+title: AskedWhy
+---
+Homeowner: One touched my shoe. Very calmly. Like it owned the deed to the house.
+Homeowner: I made a professional, controlled scream. Please stop looking at me like that.
+<<jump Questions>>
+===
+title: Questions
+---
+-> Ask another question.
+    -> When did you first see them?
+        <<jump AskedWhen>>
+    -> How many rats are there?
+        <<jump AskedHowMany>>
+    -> Why were you screaming?
+        <<jump AskedWhy>>
+-> Hear the job offer.
+    <<jump OfferQuest>>
+===
+title: OfferQuest
+---
+Homeowner: Go back to the backyard and catch all 12 rats. They run when you get close.
+Homeowner: Bring me peace and I will pay 100 coins. Real coins. Mostly real.
+-> Accept the job.
+    <<acceptRatQuest NPC>>
+    Homeowner: Good. Catch all 12, then come back. Do not let them unionize.
+    <<cam_move NPC_Cam_Rig "return">>
+-> Maybe later.
+    Homeowner: Later? They are learning the locks! Fine. Come back before they learn taxes.
+    <<cam_move NPC_Cam_Rig "return">>
+===
+title: ActiveQuest
+---
+<<cam_move NPC_Cam_Rig "npc">>
+Homeowner: That is not twelve. I can still hear the uncaught ones planning.
+Homeowner: Please finish the backyard before my furniture changes sides.
+<<cam_move NPC_Cam_Rig "return">>
+===
+title: TurnIn
+---
+<<cam_move NPC_Cam_Rig "npc">>
+Homeowner: Silence. Beautiful, suspicious silence. You caught all 12!
+Homeowner: Here are your 100 coins. Take them before I remember rent exists.
+<<rewardRatQuest NPC>>
+Homeowner: The job is complete. If anything else squeaks, I am moving.
+<<cam_move NPC_Cam_Rig "return">>
+===
+title: AfterReward
+---
+<<cam_move NPC_Cam_Rig "npc">>
+Homeowner: You already saved me, and I already paid you.
+Homeowner: No second reward. I wrote it on my hand. See? Very official.
+<<cam_move NPC_Cam_Rig "return">>
 ===
